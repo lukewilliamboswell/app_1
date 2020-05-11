@@ -6,13 +6,14 @@ Repository for a SPA web app
 ![Overview](images/overview.jpg)
 
 ## Instructions to start dev environemnt
+*add instructions here*
 docker-compose -f docker-compose.yml up 
-goa gen src/go/design
 
 ## Tasks
-
 - [ ] (if required) change folder structure   
 - [ ] Set up a PostgreSQL database init script with a **Thing** table
+  - [ ] Things have a Name of type String
+  - [ ] Things have a Features of type String array
 - [ ] Set up a Dockerfile to bring up a PostgreSQL DB for dev/testing
 - [ ] Set up a [goa design](https://github.com/goadesign/goa) for a API to manage **Things**
   - [ ] CRUD a **Thing**
