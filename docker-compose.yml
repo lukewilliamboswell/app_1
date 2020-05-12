@@ -1,6 +1,21 @@
 version: '3'
 
 services:
+  app2:
+    container_name: backend2
+    build:
+      context: ./backend-api-2
+    ports:
+      - 8000:8000
+    restart: on-failure
+    # environment:
+    #   - DB_HOST=db_postgres
+    #   - DB_PORT=5432
+    #   - DB_USER=root
+    #   - DB_PASSWORD=root
+    #   - PORT=5300
+    depends_on:
+      - fullstack-postgres
   app:
     container_name: backend
     build:
