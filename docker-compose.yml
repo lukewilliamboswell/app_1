@@ -1,4 +1,5 @@
 version: '3'
+
 services:
   app:
     container_name: backend
@@ -28,5 +29,16 @@ services:
     volumes:
       - database_postgres:/var/lib/postgresql/data
       - ./backend-db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  pgadmin:
+    container_name: postgres-pgadmin4
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: email@email.com
+      PGADMIN_DEFAULT_PASSWORD: password01
+    ports:
+      - 5301:80
+    restart: unless-stopped
+
 volumes:
   database_postgres:
