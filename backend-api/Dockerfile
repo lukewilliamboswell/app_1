@@ -1,11 +1,15 @@
 FROM golang:latest as builder
-ARG BIN_NAME=hello-api
-COPY . /$BIN_NAME
-WORKDIR /$BIN_NAME
-RUN cd cmd/$BIN_NAME && CGO_ENABLED=0 GOOS=linux go build -o $BIN_NAME
+
+ENV GO111MODULE=on
+WORKDIR /anotherdirectory
+
+COPY go.mod /anotherdirectory
+COPY go.sum /anotherdirectory
+RUN go mod download
+
+COPY . /anotherdirectory
+RUN cd /anotherdirectory/cmd/calc && CGO_ENABLED=0 GOOS=linux go build -o /go/bin/calc .
 
 FROM alpine:latest
-ARG BIN_NAME=hello-api
-COPY --from=builder /$BIN_NAME/ /$BIN_NAME/
-WORKDIR /$BIN_NAME
-ENTRYPOINT ./cmd/hello-api/hello-api
+COPY --from=builder /go/bin/calc /go/bin/calc
+ENTRYPOINT ["/go/bin/calc"]
