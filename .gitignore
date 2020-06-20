@@ -15,5 +15,7 @@
 # vendor/
 
 node_modules/
-
 .cache/
+
+dist/*.js
+dist/*.js.map
