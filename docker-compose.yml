@@ -1,6 +1,13 @@
 version: '3'
 
 services:
+  frontend:
+    build:
+      context: ./dist
+    ports:
+      - "8080:80"
+    restart: on-failure
+
   app2:
     container_name: backend2
     build:
