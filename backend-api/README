@@ -1,1 +1,7 @@
+In this directory run;
+
 goa gen backend-api/design
+goa example backend-api/design
+
+go build ./cmd/thing 
+go build ./thing/thing-cli

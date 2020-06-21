@@ -4,85 +4,60 @@ import (
 	. "goa.design/goa/v3/dsl"
 )
 
-// API describes the global properties of the API server.
-var _ = API("calc", func() {
-	Title("Calculator Service")
-	Description("HTTP service for adding numbers, a goa teaser")
-
-	// Server describes a single process listening for client requests. The DSL
-	// defines the set of services that the server hosts as well as hosts details.
-	Server("calc", func() {
-		Description("calc hosts the Calculator Service.")
-
-		// List the services hosted by this server.
-		Services("calc")
-
-		// List the Hosts and their transport URLs.
-		Host("development", func() {
-			Description("Development hosts.")
-			// Transport specific URLs, supported schemes are:
-			// 'http', 'https', 'grpc' and 'grpcs' with the respective default
-			// ports: 80, 443, 8080, 8443.
-			URI("http://0.0.0.0:8000/calc")
-			URI("grpc://0.0.0.0:8080")
-		})
-
-		Host("production", func() {
-			Description("Production hosts.")
-			// URIs can be parameterized using {param} notation.
-			URI("https://{version}.goa.design/calc")
-			URI("grpcs://{version}.goa.design")
-
-			// Variable describes a URI variable.
-			Variable("version", String, "API version", func() {
-				// URL parameters must have a default value and/or an
-				// enum validation.
-				Default("v1")
-			})
+var _ = API("thing", func() {
+	Title("thingulator Service")
+	Description("Service for adding numbers, a Goa teaser")
+	Server("thing", func() {
+		Host("localhost", func() {
+			URI("http://localhost:8000")
 		})
 	})
 })
 
-// Service describes a service
-var _ = Service("calc", func() {
-	Description("The calc service performs operations on numbers")
+var Thing = Type("Thing", func() {
+	Description("Thing describes my thing that is stored in the DB.")
+	Attribute("name", String, "Name of Thing", func() {
+		MaxLength(100)
+		Example("Apple")
+	})
+	Attribute("features", ArrayOf(String), "Features of Thing", func() {
+	})
+	Required("name")
+})
 
-	// Method describes a service method (endpoint)
-	Method("add", func() {
-		// Payload describes the method payload.
-		// Here the payload is an object that consists of two fields.
-		Payload(func() {
-			// Attribute describes an object field
-			Attribute("a", Int, "Left operand", func() {
-				Meta("rpc:tag", "1")
-			})
-			Field(2, "b", Int, "Right operand")
-			Required("a", "b")
+var ThingResult = ResultType("vnd.goa.thing", func() {
+	Reference(Thing)
+	TypeName("StoredThing")
+
+	Attributes(func() {
+		Attribute("id", UInt64)
+		Attribute("name", String)
+		Attribute("features", ArrayOf(String))
+	})
+
+	View("tiny", func() {
+		Attribute("id")
+		Attribute("name")
+	})
+
+	Required("id", "name")
+})
+
+var _ = Service("thing", func() {
+	Description("Gets all the things out of the DB")
+
+	HTTP(func() {
+		Path("/things")
+	})
+
+	Method("list", func() {
+		Result(CollectionOf(ThingResult), func() {
+			View("tiny")
 		})
-
-		// Result describes the method result.
-		// Here the result is a simple integer value.
-		Result(Int)
-
-		// HTTP describes the HTTP transport mapping.
 		HTTP(func() {
-			// Requests to the service consist of HTTP GET requests.
-			// The payload fields are encoded as path parameters.
-			GET("/add/{a}/{b}")
-			// Responses use a "200 OK" HTTP status.
-			// The result is encoded in the response body.
+			GET("/")
 			Response(StatusOK)
-		})
-
-		// GRPC describes the gRPC transport mapping.
-		GRPC(func() {
-			// Responses use a "OK" gRPC code.
-			// The result is encoded in the response message.
-			Response(CodeOK)
 		})
 	})
 
-	// Serve the file with relative path ../../gen/http/openapi.json for
-	// requests sent to /swagger.json.
-	Files("/swagger.json", "../../gen/http/openapi.json")
 })

@@ -1,9 +1,9 @@
 swagger: "2.0"
 info:
-  title: Calculator Service
-  description: HTTP service for adding numbers, a goa teaser
+  title: thingulator Service
+  description: Service for adding numbers, a Goa teaser
   version: ""
-host: 0.0.0.0:8000
+host: localhost:8000
 consumes:
 - application/json
 - application/xml
@@ -13,42 +13,53 @@ produces:
 - application/xml
 - application/gob
 paths:
-  /add/{a}/{b}:
+  /things/:
     get:
       tags:
-      - calc
-      summary: add calc
-      operationId: calc#add
-      parameters:
-      - name: a
-        in: path
-        description: Left operand
-        required: true
-        type: integer
-      - name: b
-        in: path
-        description: Right operand
-        required: true
-        type: integer
+      - thing
+      summary: list thing
+      operationId: thing#list
       responses:
         "200":
           description: OK response.
           schema:
-            type: integer
-            format: int64
+            $ref: '#/definitions/ThingStoredThingResponseTinyCollection'
       schemes:
       - http
-  /swagger.json:
-    get:
-      tags:
-      - calc
-      summary: Download ../../gen/http/openapi.json
-      operationId: calc#/swagger.json
-      responses:
-        "200":
-          description: File downloaded
-          schema:
-            type: file
-      schemes:
-      - http
-      - https
+definitions:
+  StoredThingResponseTiny:
+    title: 'Mediatype identifier: vnd.goa.thing; view=default'
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 2387476665444181728
+        format: int64
+      name:
+        type: string
+        description: Name of Thing
+        example: Apple
+        maxLength: 100
+    description: StoredThingResponse result type (tiny view) (default view)
+    example:
+      id: 3001078444823167151
+      name: Apple
+    required:
+    - id
+    - name
+  ThingStoredThingResponseTinyCollection:
+    title: 'Mediatype identifier: vnd.goa.thing; type=collection; view=tiny'
+    type: array
+    items:
+      $ref: '#/definitions/StoredThingResponseTiny'
+    description: ThingStoredThingResponseTinyCollection is the result type for an
+      array of StoredThingResponseTiny (default view)
+    example:
+    - id: 15189299754580197672
+      name: Apple
+    - id: 15189299754580197672
+      name: Apple
+    - id: 15189299754580197672
+      name: Apple
+    - id: 15189299754580197672
+      name: Apple
